@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoCircle - Raise Your Voice, Fix Your City</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: blob 7s infinite;
+        }
+        
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center px-6 md:px-20 py-4 bg-white/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50">
+        <h1 class="text-2xl md:text-3xl font-bold gradient-text">EchoCircle</h1>
+        <div class="hidden md:flex items-center gap-1">
+            <a href="/login_user" class="text-blue-600 hover:text-blue-800 px-4 py-2 rounded-lg transition font-medium">Login</a>
+            <a href="/register" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl ml-2">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden px-6 md:px-20 pt-24 pb-20 md:pt-32 md:pb-24 mt-16">
+        <div class="blob w-96 h-96 bg-blue-400 top-0 right-0"></div>
+        <div class="blob w-96 h-96 bg-blue-300 bottom-0 left-0"></div>
+        
+        <div class="relative max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                <div class="md:w-1/2 fade-in-up">
+                    <div class="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        🌟 Building Better Communities Together
+                    </div>
+                    <h2 class="text-5xl md:text-6xl font-bold mb-6 text-gray-900 leading-tight">
+                        Empower Citizens to <span class="gradient-text">Transform</span> Their Cities
+                    </h2>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+                        Report civic issues, connect with authorities, and drive real change in your neighborhood. Your voice matters.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="/login_user" class="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl text-center">
+                            Report an Issue Now
+                        </a>
+                        <a href="#features" class="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition text-center">
+                            Learn More
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-8 mt-10">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">10K+</div>
+                            <div class="text-gray-600">Issues Resolved</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">50+</div>
+                            <div class="text-gray-600">Cities</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">100K+</div>
+                            <div class="text-gray-600">Active Users</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 float-animation">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl blur-3xl opacity-20"></div>
+                        <img src="https://images.unsplash.com/photo-1565689157206-0fddef7589a2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" 
+                             alt="Citizens working together to improve city" 
+                             class="relative rounded-2xl shadow-2xl">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6 md:px-20">
+            <div class="text-center mb-16">
+                <h3 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">What is EchoCircle?</h3>
+                <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                    A revolutionary civic engagement platform connecting residents with local authorities to fix infrastructure issues—from broken streetlights and potholes to water leaks and waste management.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1">
+                    <img src="https://images.unsplash.com/photo-1620495104603-8efbb6d5ca8c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
+                         alt="Community collaboration" 
+                         class="rounded-2xl shadow-2xl">
+                </div>
+                <div class="order-1 md:order-2 space-y-6">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold">
+                            ✓
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">Real-Time Reporting</h4>
+                            <p class="text-gray-600">Instantly report issues with photos, location tags, and detailed descriptions.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold">
+                            ✓
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">Community Driven</h4>
+                            <p class="text-gray-600">Unite neighbors to prioritize problems that matter most to your community.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold">
+                            ✓
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">Full Transparency</h4>
+                            <p class="text-gray-600">Track every step from report submission to issue resolution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="features" class="py-20 bg-gradient-to-b from-gray-50 to-blue-50">
+        <div class="max-w-7xl mx-auto px-6 md:px-20">
+            <div class="text-center mb-16">
+                <h3 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">How It Works</h3>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Three simple steps to make your city better for everyone
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-600 rounded-bl-full flex items-center justify-center text-white text-2xl font-bold">
+                        1
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1627820751059-43001b92c076?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470" 
+                         alt="Person reporting pothole with smartphone" 
+                         class="rounded-xl mb-6 h-56 w-full object-cover">
+                    <h4 class="font-bold text-2xl mb-3 text-blue-600">Report an Issue</h4>
+                    <p class="text-gray-600 leading-relaxed">Spot a problem? Capture it with a photo, add location details, and submit in seconds. Every report contributes to a better community.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-600 rounded-bl-full flex items-center justify-center text-white text-2xl font-bold">
+                        2
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470" 
+                         alt="Community members discussing issues" 
+                         class="rounded-xl mb-6 h-56 w-full object-cover">
+                    <h4 class="font-bold text-2xl mb-3 text-blue-600">Gather Community Support</h4>
+                    <p class="text-gray-600 leading-relaxed">Neighbors can upvote and comment on shared concerns, helping authorities understand and prioritize the most urgent civic needs.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-600 rounded-bl-full flex items-center justify-center text-white text-2xl font-bold">
+                        3
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1730382624709-81e52dd294d4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470" 
+                         alt="City workers fixing infrastructure" 
+                         class="rounded-xl mb-6 h-56 w-full object-cover">
+                    <h4 class="font-bold text-2xl mb-3 text-blue-600">Track Progress</h4>
+                    <p class="text-gray-600 leading-relaxed">Stay informed as authorities acknowledge, assign teams, and resolve issues. Real-time updates build trust and accountability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div class="max-w-4xl mx-auto px-6 md:px-20 text-center">
+            <h3 class="text-4xl md:text-5xl font-bold mb-6">Ready to Make a Difference?</h3>
+            <p class="text-xl mb-8 opacity-90">
+                Join thousands of engaged citizens working together to create cleaner, safer, and smarter communities.
+            </p>
+            <a href="/login_user" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg hover:shadow-xl">
+                Start Reporting Today
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-6 md:px-20">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Get in Touch</h3>
+                <p class="text-lg text-gray-600">
+                    Have questions or want to partner with us? Let's collaborate for a better tomorrow.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <form action="#" method="post" class="space-y-6">
+                        <input type="text" placeholder="Your Name" class="w-full p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        <input type="email" placeholder="Your Email" class="w-full p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        <textarea placeholder="Your Message" rows="5" class="w-full p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"></textarea>
+                        <button type="submit" class="w-full bg-blue-600 text-white px-6 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-blue-50 p-6 rounded-xl">
+                        <h4 class="font-bold text-xl mb-2 text-blue-600">Email Us</h4>
+                        <p class="text-gray-600">support@echocircle.com</p>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-xl">
+                        <h4 class="font-bold text-xl mb-2 text-blue-600">Call Us</h4>
+                        <p class="text-gray-600">+91 7485963139</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-6 md:px-20">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-4 gradient-text">EchoCircle</h3>
+                    <p class="text-gray-400">Empowering citizens to build better communities.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <div class="space-y-2">
+                        <a href="#about" class="block hover:text-blue-400 transition">About</a>
+                        <a href="#features" class="block hover:text-blue-400 transition">Features</a>
+                        <a href="#contact" class="block hover:text-blue-400 transition">Contact</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Legal</h4>
+                    <div class="space-y-2">
+                        <a href="#" class="block hover:text-blue-400 transition">Privacy Policy</a>
+                        <a href="#" class="block hover:text-blue-400 transition">Terms of Service</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Follow Us</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">f</a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">t</a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">in</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>© 2025 EchoCircle. All Rights Reserved. Built with ❤️ for better communities.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

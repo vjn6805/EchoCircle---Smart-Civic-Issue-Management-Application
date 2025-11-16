@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Issues | EchoCircle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    
+    .animate-slideUp {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    .issue-card {
+      transition: all 0.3s ease;
+    }
+    
+    .issue-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .timeline-dot::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 24px;
+      bottom: -8px;
+      width: 2px;
+      background: linear-gradient(to bottom, #e5e7eb, transparent);
+    }
+    
+    .timeline-dot:last-child::before {
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 min-h-screen">
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-6 md:px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <h1 class="text-2xl md:text-3xl font-bold gradient-text">EchoCircle</h1>
+    <div class="flex items-center gap-4 md:gap-6">
+      <a href="/user/dashboard" class="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span class="hidden md:inline">Dashboard</span>
+      </a>
+      <a href="/logout" class="flex items-center gap-2 text-gray-700 hover:text-red-600 font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="hidden md:inline">Logout</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto mt-8 mb-12 px-4 md:px-6">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 animate-slideUp">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">My Reported Issues</h2>
+          <p class="text-gray-600">Track and manage all your civic reports</p>
+        </div>
+        <a href="/user/report" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition shadow-lg hover:shadow-xl font-semibold flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          New Report
+        </a>
+      </div>
+    </div>
+
+    {% if issues %}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {% for issue in issues %}
+      <div onclick="openIssueModal(this.dataset.issue)" 
+           data-issue='{{ issue | tojson }}'
+           class="issue-card bg-white rounded-2xl shadow-md hover:shadow-xl cursor-pointer overflow-hidden animate-slideUp"
+           style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+        
+        <!-- Image Section -->
+        {% if issue.image_path %}
+        <div class="relative h-48 overflow-hidden bg-gray-100">
+          <img src="/{{ issue.image_path }}" alt="Issue image" class="w-full h-full object-cover">
+          <div class="absolute top-3 right-3">
+            <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-lg backdrop-blur-sm
+              {% if issue.status == 'Resolved' %} bg-green-500/90 text-white
+              {% elif issue.status == 'In Progress' %} bg-amber-500/90 text-white
+              {% else %} bg-rose-500/90 text-white {% endif %}">
+              {{ issue.status }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Content Section -->
+        <div class="p-6">
+          <!-- Header -->
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-1 line-clamp-2">{{ issue.title }}</h3>
+              <div class="flex items-center gap-3 text-sm text-gray-600">
+                <span class="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  {{ issue.category }}
+                </span>
+                <span class="w-1 h-1 bg-gray-400 rounded-full"></span>
+                <span class="font-medium
+                  {% if issue.severity == 'Critical' %} text-red-600
+                  {% elif issue.severity == 'Moderate' %} text-amber-600
+                  {% else %} text-green-600 {% endif %}">
+                  {{ issue.severity }}
+                </span>
+              </div>
+            </div>
+            {% if not issue.image_path %}
+            <span class="px-3 py-1.5 text-xs font-bold rounded-full flex-shrink-0
+              {% if issue.status == 'Resolved' %} bg-green-100 text-green-700
+              {% elif issue.status == 'In Progress' %} bg-amber-100 text-amber-700
+              {% else %} bg-rose-100 text-rose-700 {% endif %}">
+              {{ issue.status }}
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- Meta Info -->
+          <div class="flex items-center justify-between py-3 border-t border-gray-100">
+            <span class="flex items-center gap-1 text-sm text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {{ issue.city }}
+            </span>
+            <span class="flex items-center gap-1 text-sm font-semibold text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+              </svg>
+              {{ issue.upvotes }}
+            </span>
+          </div>
+
+          <!-- Timeline Updates -->
+          <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100 mt-4">
+            <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Status Updates
+            </h4>
+            {% if issue_updates[issue.issue_id] %}
+              <ul class="space-y-3">
+                {% for update in issue_updates[issue.issue_id][:2] %}
+                <li class="flex items-start gap-3 relative timeline-dot">
+                  <div class="h-4 w-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0 relative z-10 ring-4 ring-white"></div>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-800">
+                      {{ update.status }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                      by {{ update.updated_by }} • {{ update.timestamp.strftime('%d %b %Y, %I:%M %p') }}
+                    </p>
+                    {% if update.comment %}
+                      <p class="text-sm text-gray-600 mt-2 bg-white rounded-lg p-2 border border-gray-200">{{ update.comment }}</p>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+              {% if issue_updates[issue.issue_id]|length > 2 %}
+              <p class="text-xs text-gray-500 mt-3 text-center">
+                + {{ issue_updates[issue.issue_id]|length - 2 }} more update(s)
+              </p>
+              {% endif %}
+            {% else %}
+              <div class="flex items-center gap-2 text-gray-500 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="italic">No updates yet</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="bg-white rounded-2xl shadow-lg p-12 text-center animate-slideUp">
+        <div class="max-w-md mx-auto">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-3">No Issues Reported Yet</h3>
+          <p class="text-gray-600 mb-6">Start making a difference in your community by reporting your first civic issue.</p>
+          <a href="/user/report" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition shadow-lg hover:shadow-xl font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Report Your First Issue
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Issue Details Modal -->
+  <div id="issue-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] hidden p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden animate-fadeIn relative max-h-[90vh] overflow-y-auto">
+      <!-- Close button -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-gray-600 hover:text-red-600 rounded-full p-2 shadow-lg transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Modal Image -->
+      <div id="modal-image" class="hidden relative">
+        <img src="" alt="Issue image" class="w-full object-cover max-h-96">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+      </div>
+
+      <!-- Modal Content -->
+      <div id="modal-content" class="p-8">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div class="flex-1">
+            <h2 id="modal-title" class="text-3xl font-bold text-gray-800 mb-2"></h2>
+            <p id="modal-category" class="text-sm font-semibold text-gray-600"></p>
+          </div>
+          <span id="modal-status" class="px-4 py-2 rounded-full text-sm font-bold flex-shrink-0"></span>
+        </div>
+
+        <div class="flex items-center gap-4 mb-6 text-sm text-gray-600">
+          <span id="modal-location" class="flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </span>
+          <span class="w-1 h-1 bg-gray-400 rounded-full"></span>
+          <span id="modal-upvotes" class="flex items-center gap-1 font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+            </svg>
+            <span></span>
+          </span>
+        </div>
+
+        <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 mb-6 border border-gray-100">
+          <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            Description
+          </h3>
+          <p id="modal-description" class="text-gray-700 leading-relaxed"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Modal functions
+    function openIssueModal(issueData) {
+      try {
+        const issue = JSON.parse(issueData);
+        console.log('Opening modal for issue:', issue);
+        
+        const modal = document.getElementById('issue-modal');
+        
+        // Fill modal data
+        document.getElementById('modal-title').textContent = issue.title || 'No Title';
+        document.getElementById('modal-category').textContent = (issue.category || 'Unknown') + ' • ' + (issue.severity || 'N/A');
+        document.getElementById('modal-description').textContent = issue.description || 'No description provided.';
+        document.getElementById('modal-upvotes').querySelector('span').textContent = (issue.upvotes || 0) + ' upvotes';
+        
+        // Location with fallback
+        if (issue.latitude && issue.longitude) {
+          document.getElementById('modal-location').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> ' + (issue.city || 'Unknown City') + ' (' + parseFloat(issue.latitude).toFixed(4) + ', ' + parseFloat(issue.longitude).toFixed(4) + ')';
+        } else {
+          document.getElementById('modal-location').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> ' + (issue.city || 'Unknown City');
+        }
+
+        // Status badge
+        const statusEl = document.getElementById('modal-status');
+        statusEl.textContent = issue.status || 'Unknown';
+        statusEl.className = 'px-4 py-2 rounded-full text-sm font-bold flex-shrink-0';
+        if (issue.status === 'Resolved') statusEl.classList.add('bg-green-500', 'text-white');
+        else if (issue.status === 'In Progress') statusEl.classList.add('bg-amber-500', 'text-white');
+        else statusEl.classList.add('bg-rose-500', 'text-white');
+
+        // Image with proper fallback
+        const imgDiv = document.getElementById('modal-image');
+        if (issue.image_path && issue.image_path.trim() !== '') {
+          const img = imgDiv.querySelector('img');
+          img.src = '/' + issue.image_path;
+          img.onerror = function() {
+            imgDiv.classList.add('hidden');
+          };
+          imgDiv.classList.remove('hidden');
+        } else {
+          imgDiv.classList.add('hidden');
+        }
+
+        // Show modal
+        modal.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error opening modal:', error);
+        alert('Error opening issue details');
+      }
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('issue-modal').classList.add('hidden');
+    }
+
+    // Close modal on background click
+    window.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('issue-modal');
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target.id === 'issue-modal') closeModal();
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

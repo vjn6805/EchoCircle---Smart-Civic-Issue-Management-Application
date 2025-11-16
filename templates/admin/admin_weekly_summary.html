@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Summary | EchoCircle Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-6 md:px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <h1 class="text-2xl font-bold text-blue-600">EchoCircle Analytics</h1>
+    <div class="flex items-center gap-3">
+      <a href="/admin/dashboard" class="text-blue-600 font-semibold hover:text-blue-800">← Back to Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 md:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">Weekly Summary Report</h2>
+      <p class="text-gray-600">{{ city }} - {{ department }} Department</p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Issues</p>
+              <p class="text-4xl font-bold text-gray-900">{{ total }}</p>
+            </div>
+            <div class="bg-gray-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-gray-50 border-t border-gray-100">
+          <p class="text-xs text-gray-700 font-medium">This week</p>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">Resolved</p>
+              <p class="text-4xl font-bold text-green-600">{{ resolved }}</p>
+            </div>
+            <div class="bg-green-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-green-50 border-t border-green-100">
+          <p class="text-xs text-green-700 font-medium">Successfully completed</p>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">In Progress</p>
+              <p class="text-4xl font-bold text-blue-600">{{ in_progress }}</p>
+            </div>
+            <div class="bg-blue-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-blue-50 border-t border-blue-100">
+          <p class="text-xs text-blue-700 font-medium">Currently being worked on</p>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">Pending</p>
+              <p class="text-4xl font-bold text-amber-600">{{ pending }}</p>
+            </div>
+            <div class="bg-amber-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-amber-50 border-t border-amber-100">
+          <p class="text-xs text-amber-700 font-medium">Awaiting attention</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Summary -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 mb-8">
+      <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        AI-Generated Weekly Summary
+      </h3>
+      <p class="text-gray-700 leading-relaxed">{{ summary_text }}</p>
+    </div>
+
+    
+
+    <!-- Export Option -->
+    <div class="flex justify-end">
+      <button onclick="window.print()" 
+              class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-lg hover:shadow-xl flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        Export as PDF
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

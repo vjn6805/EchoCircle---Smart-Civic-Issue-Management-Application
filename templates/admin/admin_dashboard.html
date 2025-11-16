@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | EchoCircle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    tbody tr {
+      transition: all 0.2s ease;
+    }
+    
+    tbody tr:hover {
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+  </style>
+</head>
+
+
+
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-6 md:px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <h1 class="text-2xl md:text-3xl font-bold gradient-text">EchoCircle Admin</h1>
+    <div class="flex items-center gap-3 md:gap-6">
+      <!-- Admin Info -->
+      <div class="hidden md:flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span class="text-gray-700 font-semibold">{{ admin_name }}</span>
+      </div>
+    
+      <!-- 🧰 Technician Management Button -->
+      <a href="/admin/technicians" 
+         class="bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-200 transition flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 12h6m-6 4h6m-9 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Technicians
+      </a>
+    
+      <!-- 📊 Analytics Button -->
+      <a href="/admin/analytics" 
+         class="bg-green-100 text-green-700 font-semibold px-4 py-2 rounded-lg hover:bg-green-200 transition flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 17v-6a2 2 0 012-2h8M3 13h2a2 2 0 012 2v4a2 2 0 01-2 2H3z" />
+        </svg>
+        Analytics
+      </a>
+
+      <!-- 🧾 Export Button -->
+<button onclick="openExportModal()" 
+        class="bg-yellow-100 text-yellow-700 font-semibold px-4 py-2 rounded-lg hover:bg-yellow-200 transition flex items-center gap-2">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M12 4v16m8-8H4" />
+  </svg>
+  Export
+</button>
+
+    
+      <!-- Logout -->
+      <a href="/logout" class="text-gray-600 hover:text-blue-600 font-medium transition flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="hidden md:inline">Logout</span>
+      </a>
+    </div>
+    
+  </nav>
+
+  <!-- Welcome Section -->
+  <div class="px-6 md:px-8 py-6 fade-in">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome back, {{ admin_name }}!</h2>
+        <p class="text-gray-600">Managing {{ department }} issues in {{ city }}</p>
+      </div>
+      <!-- Weekly Summary Button -->
+      <a href="/admin/weekly_summary"
+         class="inline-flex items-center gap-2 bg-purple-100 text-purple-700 font-semibold px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        Weekly Summary
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <section class="px-6 md:px-8 pb-8 fade-in" style="animation-delay: 0.2s;">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Pending Issues -->
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">Pending</p>
+              <p class="text-4xl font-bold text-amber-600">{{ stats.pending or 0 }}</p>
+            </div>
+            <div class="bg-amber-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-amber-50 border-t border-amber-100">
+          <p class="text-xs text-amber-700 font-medium">Awaiting attention</p>
+        </div>
+      </div>
+
+      <!-- In Progress Issues -->
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">In Progress</p>
+              <p class="text-4xl font-bold text-blue-600">{{ stats.in_progress or 0 }}</p>
+            </div>
+            <div class="bg-blue-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-blue-50 border-t border-blue-100">
+          <p class="text-xs text-blue-700 font-medium">Currently being worked on</p>
+        </div>
+      </div>
+
+      <!-- Resolved Issues -->
+      <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 uppercase tracking-wide">Resolved</p>
+              <p class="text-4xl font-bold text-green-600">{{ stats.resolved or 0 }}</p>
+            </div>
+            <div class="bg-green-500 p-4 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-green-50 border-t border-green-100">
+          <p class="text-xs text-green-700 font-medium">Successfully completed</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorized Issues -->
+  <section class="px-6 md:px-8 pb-12 fade-in" style="animation-delay: 0.4s;">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {% for severity, list in issues.items() %}
+        <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200">
+          {% if severity == 'Critical' %}
+            <h3 class="text-2xl font-bold text-red-600 flex items-center gap-3">
+              
+              Critical Issues
+              <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">{{ list|length }}</span>
+            </h3>
+          {% elif severity == 'Moderate' %}
+            <h3 class="text-2xl font-bold text-amber-600 flex items-center gap-3">
+              
+              Moderate Issues
+              <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-semibold">{{ list|length }}</span>
+            </h3>
+          {% else %}
+            <h3 class="text-2xl font-bold text-green-600 flex items-center gap-3">
+              
+              Minor Issues
+              <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">{{ list|length }}</span>
+            </h3>
+          {% endif %}
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200 text-black">
+              <tr>
+                <th class="p-4 text-left font-semibold">
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                    Title
+                  </div>
+                </th>
+
+                <th class="p-4 text-center font-semibold">
+                  <div class="flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                    </svg>
+                    Upvotes
+                  </div>
+                </th>
+
+                <th class="p-4 text-center font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for issue in list %}
+              <tr>
+                <td class="p-4">
+                  <div class="font-semibold text-gray-800">{{ issue.title }}</div>
+                </td>
+
+                <td class="p-4 text-center">
+                  <span class="inline-flex items-center gap-1 font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                    </svg>
+                    {{ issue.upvotes }}
+                  </span>
+                </td>
+
+                <td class="p-4 text-center">
+                    <button 
+                    onclick="openIssueModal({{ issue.issue_id }})"
+                    class="inline-flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold text-xs shadow-md hover:shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    View
+                  </button>
+                  
+                </td>
+              </tr>
+              {% endfor %}
+              {% if not list %}
+              <tr>
+                <td colspan="3" class="text-center py-12">
+                  <div class="text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <p class="font-medium">No issues in this category</p>
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Heatmap Section -->
+<section class="px-6 md:px-8 pb-12 fade-in" style="animation-delay: 0.3s;">
+  <div class="max-w-7xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden">
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200">
+      <h3 class="text-2xl font-bold text-blue-600 flex items-center gap-3">
+        City Heatmap — Issue Hotspots
+      </h3>
+      <p class="text-sm text-gray-600">Visualizing active issue density across {{ city }}</p>
+    </div>
+    <div id="heatmapContainer" style="height: 500px; width: 100%;"></div>
+  </div>
+</section>
+
+<div class="flex justify-center gap-4 py-3 text-sm text-gray-700">
+  <div class="flex items-center gap-2">
+    <span class="inline-block w-4 h-4 bg-red-500 rounded-full"></span> Critical
+  </div>
+  <div class="flex items-center gap-2">
+    <span class="inline-block w-4 h-4 bg-yellow-400 rounded-full"></span> Moderate
+  </div>
+  <div class="flex items-center gap-2">
+    <span class="inline-block w-4 h-4 bg-green-400 rounded-full"></span> Minor
+  </div>
+</div>
+
+
+
+  <!-- ISSUE DETAIL MODAL -->
+  <div id="issueModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white w-full max-w-4xl rounded shadow-lg overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-100">
+        <h2 class="text-xl font-bold" id="modalTitle">Issue Details</h2>
+        <button onclick="closeIssueModal()" class="text-gray-500 hover:text-gray-700">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 overflow-y-auto flex-1" id="modalContent">
+        <div class="text-center text-gray-500 py-8">Loading issue details...</div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t bg-gray-50 flex justify-end">
+        <button onclick="closeIssueModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT MODAL -->
+<div id="exportModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+  <div class="bg-white w-full max-w-lg rounded shadow-lg overflow-hidden flex flex-col">
+    <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-100">
+      <h2 class="text-xl font-bold">Export Issues</h2>
+      <button onclick="closeExportModal()" class="text-gray-500 hover:text-gray-700">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Status</label>
+        <select id="exportStatus" class="w-full border border-gray-300 rounded px-3 py-2">
+          <option value="">All</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Category</label>
+        <input id="exportCategory" type="text" placeholder="Leave empty for all" class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Start Date</label>
+          <input id="exportStartDate" type="date" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">End Date</label>
+          <input id="exportEndDate" type="date" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Export Format</label>
+        <select id="exportType" class="w-full border border-gray-300 rounded px-3 py-2">
+          <option value="csv">CSV</option>
+          <option value="pdf">PDF</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+      <button onclick="closeExportModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+      <button onclick="exportIssues()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Download</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+
+<script>
+function openIssueModal(issueId) {
+  const modal = document.getElementById('issueModal');
+  const content = document.getElementById('modalContent');
+  const title = document.getElementById('modalTitle');
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  content.innerHTML = '<div class="text-center text-gray-500 py-8">Loading issue details...</div>';
+
+  fetch(`/admin/issue_data/${issueId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        content.innerHTML = `<p class="text-red-500 text-center font-semibold">${data.message}</p>`;
+        return;
+      }
+
+      const issue = data.issue;
+      const updates = data.updates;
+
+      title.textContent = issue.title;
+
+      content.innerHTML = `
+        <!-- Basic Information -->
+        <div class="bg-white border border-gray-300 rounded p-4 mb-4">
+          <h3 class="text-lg font-bold mb-3">Issue Details</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div><strong>Category:</strong> ${issue.category}</div>
+            <div><strong>Severity:</strong> ${issue.severity}</div>
+            <div><strong>Status:</strong> ${issue.status}</div>
+            <div><strong>City:</strong> ${issue.city}</div>
+            <div><strong>Reported By:</strong> ${issue.reported_by}</div>
+            <div><strong>Upvotes:</strong> ${issue.upvotes}</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="bg-white border border-gray-300 rounded p-4 mb-4">
+          <h3 class="text-lg font-bold mb-2">Description</h3>
+          <p class="text-gray-700">${issue.description}</p>
+        </div>
+
+        <!-- Location Map -->
+        <div class="bg-white border border-gray-300 rounded p-4 mb-4">
+          <h3 class="text-lg font-bold mb-2">Issue Location</h3>
+          <div id="issueMap" style="height: 200px; width: 100%; border: 1px solid #ccc;"></div>
+        </div>
+
+        ${issue.image_path ? `
+          <!-- Attached Image -->
+          <div class="bg-white border border-gray-300 rounded p-4 mb-4">
+            <h3 class="text-lg font-bold mb-2">Attached Image</h3>
+            <img src="/${issue.image_path}" alt="Issue Image" class="w-full max-h-64 object-cover border">
+          </div>
+        ` : ''}
+
+        <!-- Update History -->
+        <div class="bg-white border border-gray-300 rounded p-4 mb-4">
+          <h3 class="text-lg font-bold mb-2">Update History</h3>
+          <div class="space-y-2 max-h-32 overflow-y-auto">
+            ${updates.length ? updates.map(u => `
+              <div class="border-l-4 border-blue-500 pl-3 py-2">
+                <div class="text-sm font-medium">${u.updated_by} - ${u.timestamp}</div>
+                <div class="text-sm">Status: ${u.status}</div>
+                ${u.comment ? `<div class="text-sm text-gray-600">${u.comment}</div>` : ''}
+              </div>
+            `).join('') : `<p class="text-gray-500">No updates yet</p>`}
+          </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="bg-gray-100 border border-gray-300 rounded p-4">
+          <h3 class="text-lg font-bold mb-3">Admin Actions</h3>
+          <form onsubmit="updateIssue(event, ${issue.issue_id})" class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium mb-1">Status</label>
+                <select id="status-${issue.issue_id}" class="w-full border border-gray-300 rounded px-3 py-2">
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Assign Technician</label>
+                <select id="tech-${issue.issue_id}" class="w-full border border-gray-300 rounded px-3 py-2">
+                  <option value="">Select Technician</option>
+                  ${data.technicians.map(t => `<option value="${t.technician_id}">${t.name}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Comment</label>
+              <textarea id="comment-${issue.issue_id}" class="w-full border border-gray-300 rounded px-3 py-2" rows="2"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+              Update Issue
+            </button>
+          </form>
+        </div>
+      `;
+      
+      // Initialize map after content is loaded
+      setTimeout(() => {
+        const map = L.map('issueMap').setView([issue.latitude, issue.longitude], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.marker([issue.latitude, issue.longitude])
+          .addTo(map)
+          .bindPopup(issue.title);
+      }, 100);
+    })
+    .catch(() => {
+      content.innerHTML = '<p class="text-red-500 text-center">Error fetching issue details</p>';
+    });
+}
+
+function closeIssueModal() {
+  const modal = document.getElementById('issueModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+function updateIssue(event, issueId) {
+  event.preventDefault();
+
+  const status = document.getElementById(`status-${issueId}`).value;
+  const tech = document.getElementById(`tech-${issueId}`).value;
+  const comment = document.getElementById(`comment-${issueId}`).value;
+
+  fetch(`/admin/update_issue/${issueId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, technician_id: tech, comment })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert('Issue updated successfully');
+        closeIssueModal();
+        window.location.reload();
+      } else {
+        alert('Error: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error updating issue');
+    });
+}
+
+function openExportModal() {
+  document.getElementById('exportModal').classList.remove('hidden');
+  document.getElementById('exportModal').classList.add('flex');
+}
+
+function closeExportModal() {
+  document.getElementById('exportModal').classList.add('hidden');
+  document.getElementById('exportModal').classList.remove('flex');
+}
+
+function exportIssues() {
+  const status = document.getElementById('exportStatus').value;
+  const category = document.getElementById('exportCategory').value;
+  const start_date = document.getElementById('exportStartDate').value;
+  const end_date = document.getElementById('exportEndDate').value;
+  const type = document.getElementById('exportType').value;
+
+  let url = `/admin/export?type=${type}`;
+  if (status) url += `&status=${encodeURIComponent(status)}`;
+  if (category) url += `&category=${encodeURIComponent(category)}`;
+  if (start_date && end_date) url += `&start_date=${start_date}&end_date=${end_date}`;
+
+  window.open(url, '_blank');
+  closeExportModal();
+}
+
+function initHeatmap() {
+  const map = L.map('heatmapContainer').setView([23.0225, 72.5714], 12); // default to Ahmedabad
+
+  // Base map
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Fetch data
+  fetch('/admin/heatmap_data')
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success || !data.issues.length) {
+        alert("No issue data available for heatmap.");
+        return;
+      }
+
+      const heatPoints = [];
+      const markerGroup = L.layerGroup().addTo(map);
+
+      data.issues.forEach(issue => {
+        const lat = issue.latitude;
+        const lon = issue.longitude;
+        const severity = issue.severity;
+        const title = issue.title || "Untitled Issue";
+        const status = issue.status || "Pending";
+
+        // 🟠 Heat intensity
+        let intensity = 0.5;
+        if (severity === 'Critical') intensity = 1.0;
+        else if (severity === 'Moderate') intensity = 0.7;
+        else intensity = 0.4;
+
+        heatPoints.push([lat, lon, intensity]);
+
+        // 📍 Marker color by severity
+        let iconColor = 'green';
+        if (severity === 'Critical') iconColor = 'red';
+        else if (severity === 'Moderate') iconColor = 'orange';
+
+        // 🧭 Create custom marker
+        const marker = L.circleMarker([lat, lon], {
+          radius: 8,
+          fillColor: iconColor,
+          color: "#fff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        });
+
+        // 🧾 Marker popup
+        marker.bindPopup(`
+          <div class="text-sm">
+            <strong>${title}</strong><br>
+            <span>Status:</span> ${status}<br>
+            <span>Severity:</span> ${severity}
+          </div>
+        `);
+
+        marker.addTo(markerGroup);
+      });
+
+      // 🔥 Add heat layer (under markers)
+      const heatLayer = L.heatLayer(heatPoints, {
+        radius: 25,
+        blur: 15,
+        maxZoom: 17,
+        gradient: {
+          0.4: "lime",
+          0.6: "yellow",
+          0.8: "orange",
+          1.0: "red"
+        }
+      }).addTo(map);
+
+      // Layer control (toggle between markers & heatmap)
+      const overlayMaps = {
+        "Heatmap": heatLayer,
+        "Issue Markers": markerGroup
+      };
+      L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+    })
+    .catch(err => console.error("Error loading heatmap:", err));
+}
+
+// Initialize on page load
+window.addEventListener('load', initHeatmap);
+
+
+
+
+</script>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    </style>
+
+</body>
+</html>

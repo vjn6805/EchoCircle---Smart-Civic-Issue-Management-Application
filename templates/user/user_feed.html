@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Feed | EchoCircle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-6 md:px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <h1 class="text-2xl md:text-3xl font-bold gradient-text">EchoCircle Feed</h1>
+    <div class="flex items-center gap-3 md:gap-6">
+      <a href="/user/dashboard" class="text-gray-600 hover:text-blue-600 font-medium transition flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+        </svg>
+        <span class="hidden md:inline">Dashboard</span>
+      </a>
+      <a href="/user/report" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 md:px-6 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition shadow-lg hover:shadow-xl font-semibold flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span class="hidden md:inline">Report Issue</span>
+      </a>
+      <a href="/logout" class="text-gray-600 hover:text-blue-600 font-medium transition flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="hidden md:inline">Logout</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Feed Container -->
+  <div class="h-[calc(100vh-80px)] flex flex-col">
+    <div class="bg-white/80 backdrop-blur-md shadow-sm p-4 md:p-6 border-b border-gray-200">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+          </svg>
+          Community Feed - {{ city }}
+        </h2>
+        <p class="text-gray-600 text-sm mt-1">{{ feed_posts|length }} recent posts from your community</p>
+      </div>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 scrollbar-thin">
+      <div class="max-w-4xl mx-auto space-y-6">
+        {% for post in feed_posts %}
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                {{ post.author_name[0].upper() }}
+              </div>
+              <div>
+                <p class="font-semibold text-gray-800">{{ post.author_name }}</p>
+                <p class="text-sm text-gray-500">{{ post.created_at.strftime('%b %d, %Y at %I:%M %p') }}</p>
+              </div>
+            </div>
+            <span class="text-sm px-3 py-1 rounded-full {% if post.severity == 'Critical' %}bg-red-100 text-red-700{% elif post.severity == 'Moderate' %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %}">{{ post.severity }}</span>
+          </div>
+          
+          <h3 class="font-bold text-gray-800 text-lg mb-3">{{ post.title }}</h3>
+          <p class="text-gray-600 mb-4">{{ post.description }}</p>
+          
+          {% if post.image_path %}
+          <img src="/{{ post.image_path }}" alt="Issue image" class="w-full max-h-64 object-cover rounded-lg mb-4">
+          {% endif %}
+          
+          <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div class="flex items-center gap-6">
+              <button onclick="toggleLike({{ post.issue_id }}, this)" class="flex items-center gap-2 {% if post.user_liked %}text-red-500{% else %}text-gray-500 hover:text-red-500{% endif %} transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" {% if post.user_liked %}fill="currentColor"{% else %}fill="none" stroke="currentColor"{% endif %} viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span>{{ post.like_count }}</span>
+              </button>
+              <button onclick="toggleComments({{ post.issue_id }}, this)" class="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <span>{{ post.comment_count }}</span>
+              </button>
+            </div>
+            <span class="text-sm px-3 py-1 rounded-full bg-gray-200 text-gray-600">{{ post.category }}</span>
+          </div>
+          
+          <!-- Comments Section -->
+          <div id="comments-{{ post.issue_id }}" class="hidden mt-4 pt-4 border-t border-gray-200">
+            <div class="space-y-3 mb-4" id="comments-list-{{ post.issue_id }}"></div>
+            <div class="flex gap-3">
+              <input type="text" id="comment-input-{{ post.issue_id }}" placeholder="Add a comment..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <button onclick="addComment({{ post.issue_id }})" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        
+        {% if not feed_posts %}
+        <div class="text-center py-12">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+          </svg>
+          <p class="text-gray-500 text-lg font-medium">No community posts yet</p>
+          <p class="text-gray-400 mt-1">Check back later for updates from your neighbors!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleLike(issueId, button) {
+      fetch(`/like_post/${issueId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const icon = button.querySelector('svg');
+          const count = button.querySelector('span');
+          count.textContent = data.like_count;
+          
+          if (data.action === 'liked') {
+            button.classList.remove('text-gray-500');
+            button.classList.add('text-red-500');
+            icon.setAttribute('fill', 'currentColor');
+            icon.removeAttribute('stroke');
+          } else {
+            button.classList.remove('text-red-500');
+            button.classList.add('text-gray-500');
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+          }
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    function toggleComments(issueId, button) {
+      const commentsDiv = document.getElementById(`comments-${issueId}`);
+      const commentsList = document.getElementById(`comments-list-${issueId}`);
+      
+      if (commentsDiv.classList.contains('hidden')) {
+        fetch(`/get_comments/${issueId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            commentsList.innerHTML = '';
+            data.comments.forEach(comment => {
+              const commentDiv = document.createElement('div');
+              commentDiv.className = 'bg-white p-3 rounded-lg';
+              commentDiv.innerHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    ${comment.name[0].toUpperCase()}
+                  </div>
+                  <span class="font-semibold text-gray-700">${comment.name}</span>
+                  <span class="text-gray-400 text-sm">${new Date(comment.created_at).toLocaleDateString()}</span>
+                </div>
+                <p class="text-gray-600 ml-8">${comment.comment_text}</p>
+              `;
+              commentsList.appendChild(commentDiv);
+            });
+            commentsDiv.classList.remove('hidden');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      } else {
+        commentsDiv.classList.add('hidden');
+      }
+    }
+
+    function addComment(issueId) {
+      const input = document.getElementById(`comment-input-${issueId}`);
+      const comment = input.value.trim();
+      
+      if (!comment) return;
+      
+      fetch(`/add_comment/${issueId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: comment })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const commentsList = document.getElementById(`comments-list-${issueId}`);
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'bg-white p-3 rounded-lg';
+          commentDiv.innerHTML = `
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                ${data.comment.name[0].toUpperCase()}
+              </div>
+              <span class="font-semibold text-gray-700">${data.comment.name}</span>
+              <span class="text-gray-400 text-sm">Just now</span>
+            </div>
+            <p class="text-gray-600 ml-8">${data.comment.comment_text}</p>
+          `;
+          commentsList.insertBefore(commentDiv, commentsList.firstChild);
+          input.value = '';
+          
+          // Update comment count
+          const commentButton = document.querySelector(`button[onclick="toggleComments(${issueId}, this)"] span`);
+          commentButton.textContent = parseInt(commentButton.textContent) + 1;
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>
