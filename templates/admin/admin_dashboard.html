@@ -584,7 +584,7 @@ function exportIssues() {
 }
 
 function initHeatmap() {
-  const map = L.map('heatmapContainer').setView([23.0225, 72.5714], 12); // default to Ahmedabad
+  const map = L.map('heatmapContainer').setView([{{ lat }}, {{ lon }}], 12);
 
   // Base map
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

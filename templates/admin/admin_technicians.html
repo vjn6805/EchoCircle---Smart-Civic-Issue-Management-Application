@@ -10,7 +10,7 @@
 <body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
   <!-- Navbar -->
   <nav class="flex justify-between items-center px-6 md:px-8 py-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-    <h1 class="text-2xl font-bold text-blue-600">EchoCircle Analytics</h1>
+    <h1 class="text-2xl font-bold text-blue-600">EchoCircle Admin</h1>
     <div class="flex items-center gap-3">
       <a href="/admin/dashboard" class="text-blue-600 font-semibold hover:text-blue-800">← Back to Dashboard</a>
     </div>
@@ -82,6 +82,10 @@
         <div>
           <label class="block font-medium text-gray-700 mb-1">Phone</label>
           <input type="text" name="phone" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" name="password" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter login password">
         </div>
         <input type="hidden" name="city" value="{{ city }}">
         <input type="hidden" name="department" value="{{ department }}">
